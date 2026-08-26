@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!--
+    Logo di datahypotenus: l'ipotenusa, il lato che tiene insieme gli altri due.
+    Terracotta su bianco, gli stessi colori dell'applicazione.
+  -->
+  <rect width="256" height="256" rx="56" fill="#a2492c" />
+  <path
+    d="M56 188 128 60l72 128z"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="19"
+    stroke-linejoin="round"
+  />
+</svg>

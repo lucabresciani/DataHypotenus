@@ -1,0 +1,312 @@
+/*
+ * Sistema visivo di datahypotenus — "Archivio".
+ *
+ * L'applicazione cataloga oggetti fisici in stanze fisiche. Il linguaggio non
+ * e' quello di un gestionale ma di un archivio ben tenuto: fondo di carta,
+ * inchiostro, un solo accento terracotta che significa "sei qui" e "fai
+ * questo", filetti al posto delle scatole, e numeri che si incolonnano come
+ * in un registro.
+ *
+ * Regole che tengono insieme il tutto:
+ *  - niente riquadro dentro riquadro: il contenuto sta sul fondo pagina,
+ *    separato da filetti. L'elevazione e' riservata a cio' che galleggia
+ *    davvero (dialoghi, popover, palette).
+ *  - un solo raggio per famiglia: 8px per i controlli, 14px per le superfici
+ *    che galleggiano. Mai mischiare.
+ *  - il colore pieno e' rarissimo: azione primaria, selezione corrente, stato.
+ *    Gli stati non parlano mai col colore da solo (colore + icona + testo).
+ *  - nessun font remoto: Geist arriva dal pacchetto npm, l'app deve partire
+ *    senza rete.
+ */
+
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@import '@fontsource-variable/geist/index.css';
+@import '@fontsource-variable/geist-mono/index.css';
+
+/* Il tema risolto sta sempre su <html data-theme>: lo scrive il primo script
+   della pagina, prima del paint, anche quando la preferenza e' "automatico". */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  /* --- Carta e inchiostro ------------------------------------------------- */
+  --background: oklch(0.988 0.003 60);
+  --surface: oklch(0.968 0.004 60);
+  --surface-sunken: oklch(0.945 0.005 58);
+  --foreground: oklch(0.24 0.012 45);
+  --muted: oklch(0.955 0.004 60);
+  --muted-foreground: oklch(0.492 0.014 45);
+  --faint-foreground: oklch(0.62 0.012 45);
+
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+
+  --border: oklch(0.9 0.005 55);
+  --border-strong: oklch(0.83 0.008 50);
+  --input: oklch(0.87 0.007 55);
+
+  /* --- Terracotta: l'identita' del progetto, ritarata sul fondo nuovo ----- */
+  --primary: oklch(0.505 0.155 33);
+  --primary-hover: oklch(0.445 0.155 33);
+  --primary-foreground: oklch(0.99 0.004 60);
+  --primary-soft: oklch(0.955 0.028 34);
+  --primary-soft-border: oklch(0.885 0.055 34);
+  --primary-ink: oklch(0.45 0.155 33);
+
+  --secondary: oklch(0.955 0.004 60);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.955 0.028 34);
+  --accent-foreground: oklch(0.42 0.15 33);
+
+  --ring: oklch(0.505 0.155 33);
+
+  /* --- Stati -------------------------------------------------------------- */
+  --ok: oklch(0.5 0.115 152);
+  --ok-soft: oklch(0.955 0.035 152);
+  --warn: oklch(0.51 0.115 68);
+  --warn-soft: oklch(0.958 0.045 78);
+  --destructive: oklch(0.505 0.19 24);
+  --destructive-soft: oklch(0.955 0.038 24);
+  --info: oklch(0.5 0.115 248);
+  --info-soft: oklch(0.955 0.032 248);
+
+  /* --- Dati: categoriale a cinque tinte, distinguibili anche in grigio ---- */
+  --chart-1: oklch(0.545 0.152 33);
+  --chart-2: oklch(0.5 0.108 205);
+  --chart-3: oklch(0.62 0.128 82);
+  --chart-4: oklch(0.46 0.1 285);
+  --chart-5: oklch(0.55 0.098 152);
+
+  /* --- Barra laterale ----------------------------------------------------- */
+  --sidebar: oklch(0.962 0.005 58);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-border: oklch(0.895 0.006 55);
+  --sidebar-accent: oklch(0.93 0.008 55);
+
+  /* --- Forma -------------------------------------------------------------- */
+  --radius: 0.5rem;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --background: oklch(0.163 0.006 50);
+  --surface: oklch(0.198 0.007 50);
+  --surface-sunken: oklch(0.145 0.006 50);
+  --foreground: oklch(0.948 0.004 60);
+  --muted: oklch(0.216 0.007 50);
+  --muted-foreground: oklch(0.735 0.01 55);
+  --faint-foreground: oklch(0.6 0.01 52);
+
+  --card: oklch(0.208 0.008 50);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.216 0.008 50);
+  --popover-foreground: var(--foreground);
+
+  --border: oklch(0.295 0.008 50);
+  --border-strong: oklch(0.405 0.01 50);
+  --input: oklch(0.335 0.009 50);
+
+  --primary: oklch(0.735 0.135 38);
+  --primary-hover: oklch(0.79 0.13 38);
+  --primary-foreground: oklch(0.17 0.014 42);
+  --primary-soft: oklch(0.29 0.05 36);
+  --primary-soft-border: oklch(0.4 0.078 36);
+  --primary-ink: oklch(0.795 0.125 38);
+
+  --secondary: oklch(0.24 0.008 50);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.28 0.045 36);
+  --accent-foreground: oklch(0.83 0.12 38);
+
+  --ring: oklch(0.735 0.135 38);
+
+  --ok: oklch(0.76 0.13 152);
+  --ok-soft: oklch(0.27 0.05 152);
+  --warn: oklch(0.79 0.125 80);
+  --warn-soft: oklch(0.285 0.05 80);
+  --destructive: oklch(0.71 0.16 25);
+  --destructive-soft: oklch(0.285 0.07 25);
+  --info: oklch(0.75 0.11 248);
+  --info-soft: oklch(0.275 0.05 248);
+
+  --chart-1: oklch(0.735 0.135 38);
+  --chart-2: oklch(0.7 0.105 205);
+  --chart-3: oklch(0.79 0.12 82);
+  --chart-4: oklch(0.68 0.105 285);
+  --chart-5: oklch(0.72 0.095 152);
+
+  --sidebar: oklch(0.185 0.007 50);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-border: oklch(0.275 0.008 50);
+  --sidebar-accent: oklch(0.245 0.009 50);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-faint: var(--faint-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-border: var(--primary-soft-border);
+  --color-primary-ink: var(--primary-ink);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-destructive: var(--destructive);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+
+  /* Una sola famiglia, due tagli. Geist per il testo, Geist Mono per i numeri
+     che devono incolonnarsi e per gli identificatori. */
+  --font-sans: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* Scala fissa, rapporto ~1.15: in un'app si lavora a DPI costante, i titoli
+     fluidi peggiorerebbero le cose. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.375rem;
+  --text-md: 1rem;
+  --text-md--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.625rem;
+  --text-xl: 1.375rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.75rem;
+  --text-2xl--line-height: 2.125rem;
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 2.5rem;
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 6px);
+  --radius-xl: calc(var(--radius) + 10px);
+
+  /* Ombre tinte dell'inchiostro, mai nero puro su fondo chiaro. */
+  --shadow-raise: 0 1px 2px oklch(0.24 0.012 45 / 0.07);
+  --shadow-float: 0 12px 32px oklch(0.24 0.012 45 / 0.12), 0 2px 8px oklch(0.24 0.012 45 / 0.07);
+
+  /* Curve forti: le predefinite del browser non hanno spinta. */
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-quint: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans text-base antialiased;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* I numeri si incolonnano sempre: in un inventario si confrontano. */
+  :is(td, th, .tabular) {
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Il fuoco si vede sempre, e si vede uguale ovunque. */
+  :focus-visible {
+    @apply outline-ring outline-2 outline-offset-2;
+  }
+
+  ::selection {
+    background: var(--primary-soft);
+    color: var(--primary-ink);
+  }
+
+  /* Barre di scorrimento discrete, non reinventate. */
+  @supports (scrollbar-width: thin) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-strong) transparent;
+    }
+  }
+}
+
+@layer utilities {
+  /* Arrivati in fondo a un dialogo, la rotellina non deve mettersi a scorrere
+     la pagina che c'e' dietro. */
+  [data-overscroll='contain'] {
+    overscroll-behavior: contain;
+  }
+
+  /* Il filetto: l'unita' di separazione di tutto il sistema. */
+  .rule {
+    @apply border-border border-t;
+  }
+
+  .rule-l {
+    @apply border-border border-l;
+  }
+}
+
+@media print {
+  [data-print-hide] {
+    display: none !important;
+  }
+}
