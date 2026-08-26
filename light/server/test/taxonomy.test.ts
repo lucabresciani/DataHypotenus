@@ -17,6 +17,7 @@ import {
 } from '../src/modules/locations.service.ts';
 import { createItem, getItem, listItems } from '../src/modules/items.service.ts';
 import { createStatus, deleteStatus, listStatuses, updateStatus } from '../src/modules/statuses.service.ts';
+import { setSettings } from '../src/modules/settings.service.ts';
 
 before(() => {
   bootstrap({ seed: false });
@@ -174,5 +175,25 @@ describe('stati degli oggetti', () => {
     const esito = deleteStatus(temporaneo.id, destinazione?.id);
     assert.equal(esito.moved, 1);
     assert.equal(getItem(item.id).status.id, destinazione?.id);
+  });
+});
+
+describe('preferenze', () => {
+  it('rifiuta una valuta non valida invece di farla arrivare all’interfaccia', () => {
+    // Bug vero: una valuta vuota passava, e `Intl.NumberFormat` lanciava
+    // dentro il render portando via l'intera pagina.
+    assert.throws(() => setSettings({ 'app.default_currency': '' }), /tre lettere/i);
+    assert.throws(() => setSettings({ 'app.default_currency': 'EURO' }), /tre lettere/i);
+    assert.equal(setSettings({ 'app.default_currency': 'chf' })['app.default_currency'], 'CHF');
+  });
+
+  it('tiene le soglie dentro un intervallo sensato', () => {
+    assert.throws(() => setSettings({ 'alerts.warranty_days': '0' }), /fra 1 e 365/);
+    assert.throws(() => setSettings({ 'alerts.dashboard_limit': '999' }), /fra 3 e 20/);
+    assert.equal(setSettings({ 'alerts.warranty_days': '90' })['alerts.warranty_days'], '90');
+  });
+
+  it('lascia passare le chiavi che non hanno una regola', () => {
+    assert.equal(setSettings({ 'app.qualcosa': 'x' })['app.qualcosa'], 'x');
   });
 });

@@ -2,24 +2,42 @@
 
 const currencyCache = new Map<string, Intl.NumberFormat>();
 
+/**
+ * `Intl.NumberFormat` lancia su un codice valuta non valido, e un throw dentro
+ * un render porta via l'intera pagina. Un dato storto in un campo non deve mai
+ * costare la schermata: qui si degrada a "numero + codice".
+ */
+function formatterFor(currency: string): Intl.NumberFormat | null {
+  const cached = currencyCache.get(currency);
+  if (cached) return cached;
+  try {
+    const formatter = new Intl.NumberFormat('it-IT', { style: 'currency', currency, maximumFractionDigits: 2 });
+    currencyCache.set(currency, formatter);
+    return formatter;
+  } catch {
+    return null;
+  }
+}
+
 export function money(value: number | null | undefined, currency = 'EUR'): string {
   if (value === null || value === undefined) return '—';
-  let formatter = currencyCache.get(currency);
-  if (!formatter) {
-    formatter = new Intl.NumberFormat('it-IT', { style: 'currency', currency, maximumFractionDigits: 2 });
-    currencyCache.set(currency, formatter);
-  }
-  return formatter.format(value);
+  const formatter = formatterFor(currency);
+  if (formatter) return formatter.format(value);
+  return `${number(value)}${currency ? ` ${currency}` : ''}`;
 }
 
 /** Importi compatti per i riquadri di sintesi: 1.240 € invece di 1.240,00 €. */
 export function moneyShort(value: number | null | undefined, currency = 'EUR'): string {
   if (value === null || value === undefined) return '—';
-  return new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: value >= 1000 ? 0 : 2,
-  }).format(value);
+  try {
+    return new Intl.NumberFormat('it-IT', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: value >= 1000 ? 0 : 2,
+    }).format(value);
+  } catch {
+    return `${number(value)}${currency ? ` ${currency}` : ''}`;
+  }
 }
 
 /** Le quantita' intere non mostrano decimali: "6 pz", non "6,00 pz". */
