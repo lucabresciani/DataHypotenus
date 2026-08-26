@@ -1,0 +1,34 @@
+{
+  "name": "@datahypotenus/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend API di datahypotenus (Fastify + SQLite)",
+  "main": "src/index.ts",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "node --watch src/index.ts",
+    "start": "node src/index.ts",
+    "build": "npm run typecheck",
+    "typecheck": "tsc --noEmit",
+    "migrate": "node src/cli/migrate.ts",
+    "seed": "node src/cli/seed.ts",
+    "backup": "node src/cli/backup.ts",
+    "gc": "node src/cli/gc.ts",
+    "test": "node --test --import ./test/setup.ts test/*.test.ts",
+    "test:watch": "node --test --watch --import ./test/setup.ts test/*.test.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.1",
+    "@fastify/multipart": "^10.0.1",
+    "@fastify/static": "^10.0.1",
+    "fastify": "^5.2.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

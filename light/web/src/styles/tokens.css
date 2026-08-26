@@ -1,0 +1,175 @@
+/*
+ * Sistema di design di datahypotenus.
+ *
+ * Strategia di colore: "restrained" (neutri leggermente caldi + un accento).
+ * L'accento e' un terracotta: l'app parla di casa, non di software aziendale,
+ * e il blu/viola da SaaS sarebbe la scelta automatica. Il colore pieno e'
+ * riservato alle azioni primarie e alla selezione corrente; gli stati
+ * (scadenza, scorta bassa) non usano MAI il colore da solo, sempre colore +
+ * icona + testo.
+ *
+ * Tipografia: una sola famiglia (lo stack di sistema). Nessun font remoto:
+ * l'applicazione deve funzionare senza rete, per definizione.
+ */
+
+:root {
+  /* --- Neutri (luce) ------------------------------------------------------ */
+  --bg: oklch(1 0 0);
+  --surface: oklch(0.985 0.003 50);
+  --surface-2: oklch(0.965 0.005 50);
+  --surface-3: oklch(0.94 0.006 50);
+  --border: oklch(0.9 0.006 50);
+  --border-strong: oklch(0.82 0.008 50);
+
+  --ink: oklch(0.24 0.01 45);
+  --ink-muted: oklch(0.45 0.015 45);
+  --ink-faint: oklch(0.62 0.012 45);
+  --ink-on-accent: oklch(0.99 0 0);
+
+  /* --- Accento ------------------------------------------------------------ */
+  --accent: oklch(0.48 0.15 32);
+  --accent-hover: oklch(0.42 0.15 32);
+  --accent-soft: oklch(0.955 0.025 32);
+  --accent-soft-border: oklch(0.88 0.05 32);
+  --accent-ink: oklch(0.42 0.15 32);
+
+  /* --- Semantici ---------------------------------------------------------- */
+  --ok: oklch(0.5 0.12 152);
+  --ok-soft: oklch(0.95 0.04 152);
+  --warn: oklch(0.52 0.12 70);
+  --warn-soft: oklch(0.95 0.05 80);
+  --danger: oklch(0.5 0.19 22);
+  --danger-soft: oklch(0.95 0.04 22);
+  --info: oklch(0.5 0.12 250);
+  --info-soft: oklch(0.95 0.035 250);
+
+  --focus-ring: oklch(0.55 0.16 250);
+
+  /* --- Tipografia --------------------------------------------------------- */
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Consolas, monospace;
+
+  /* Scala fissa (rapporto ~1.15): in un'app si lavora a DPI costante,
+     i titoli fluidi qui peggiorerebbero le cose. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.125rem;
+
+  /* --- Spaziature --------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --radius-sm: 6px;
+  --radius: 9px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 1px 2px oklch(0.2 0.01 45 / 0.06);
+  --shadow: 0 2px 6px oklch(0.2 0.01 45 / 0.07), 0 1px 2px oklch(0.2 0.01 45 / 0.05);
+  --shadow-lg: 0 12px 32px oklch(0.2 0.01 45 / 0.14), 0 2px 8px oklch(0.2 0.01 45 / 0.08);
+
+  /* --- Scala z-index semantica ------------------------------------------- */
+  --z-sticky: 100;
+  --z-drawer: 200;
+  --z-backdrop: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  --sidebar-width: 244px;
+  --topbar-height: 60px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration: 180ms;
+
+  color-scheme: light;
+}
+
+/* Tema di sistema, quando l'utente non ha scelto esplicitamente. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: oklch(0.175 0.005 45);
+    --surface: oklch(0.215 0.006 45);
+    --surface-2: oklch(0.25 0.007 45);
+    --surface-3: oklch(0.29 0.008 45);
+    --border: oklch(0.32 0.008 45);
+    --border-strong: oklch(0.42 0.01 45);
+
+    --ink: oklch(0.94 0.004 45);
+    --ink-muted: oklch(0.74 0.008 45);
+    --ink-faint: oklch(0.6 0.008 45);
+    --ink-on-accent: oklch(0.17 0.01 45);
+
+    --accent: oklch(0.72 0.13 38);
+    --accent-hover: oklch(0.78 0.13 38);
+    --accent-soft: oklch(0.29 0.05 38);
+    --accent-soft-border: oklch(0.4 0.08 38);
+    --accent-ink: oklch(0.78 0.12 38);
+
+    --ok: oklch(0.75 0.13 152);
+    --ok-soft: oklch(0.28 0.05 152);
+    --warn: oklch(0.79 0.13 80);
+    --warn-soft: oklch(0.3 0.05 80);
+    --danger: oklch(0.7 0.16 25);
+    --danger-soft: oklch(0.3 0.07 25);
+    --info: oklch(0.75 0.11 250);
+    --info-soft: oklch(0.29 0.05 250);
+
+    --focus-ring: oklch(0.72 0.13 250);
+
+    --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.35);
+    --shadow: 0 2px 8px oklch(0 0 0 / 0.4);
+    --shadow-lg: 0 16px 40px oklch(0 0 0 / 0.55);
+
+    color-scheme: dark;
+  }
+}
+
+/* Scelta esplicita dell'utente: vince sempre sulle preferenze di sistema. */
+:root[data-theme='dark'] {
+  --bg: oklch(0.175 0.005 45);
+  --surface: oklch(0.215 0.006 45);
+  --surface-2: oklch(0.25 0.007 45);
+  --surface-3: oklch(0.29 0.008 45);
+  --border: oklch(0.32 0.008 45);
+  --border-strong: oklch(0.42 0.01 45);
+
+  --ink: oklch(0.94 0.004 45);
+  --ink-muted: oklch(0.74 0.008 45);
+  --ink-faint: oklch(0.6 0.008 45);
+  --ink-on-accent: oklch(0.17 0.01 45);
+
+  --accent: oklch(0.72 0.13 38);
+  --accent-hover: oklch(0.78 0.13 38);
+  --accent-soft: oklch(0.29 0.05 38);
+  --accent-soft-border: oklch(0.4 0.08 38);
+  --accent-ink: oklch(0.78 0.12 38);
+
+  --ok: oklch(0.75 0.13 152);
+  --ok-soft: oklch(0.28 0.05 152);
+  --warn: oklch(0.79 0.13 80);
+  --warn-soft: oklch(0.3 0.05 80);
+  --danger: oklch(0.7 0.16 25);
+  --danger-soft: oklch(0.3 0.07 25);
+  --info: oklch(0.75 0.11 250);
+  --info-soft: oklch(0.29 0.05 250);
+
+  --focus-ring: oklch(0.72 0.13 250);
+
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.35);
+  --shadow: 0 2px 8px oklch(0 0 0 / 0.4);
+  --shadow-lg: 0 16px 40px oklch(0 0 0 / 0.55);
+
+  color-scheme: dark;
+}
